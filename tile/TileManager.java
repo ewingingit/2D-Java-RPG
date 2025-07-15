@@ -18,8 +18,8 @@ public class TileManager {
     this.gp = gp;
     tile = new Tile[10];
     getTileImage();
-    mapTileNum = new int[gp.maxScreenCol][gp.maxScreenRow];
-    loadMap("/res/maps/map01.txt");
+    mapTileNum = new int[gp.maxWorldCol][gp.maxWorldRow];
+    loadMap("/res/maps/world01.txt");
   }
 
   public void getTileImage() {
@@ -39,8 +39,8 @@ public class TileManager {
       tile[4] = new Tile();
       tile[4].image = ImageIO.read(getClass().getResourceAsStream("/res/tiles/tree.png"));
 
-      tile[4] = new Tile();
-      tile[4].image = ImageIO.read(getClass().getResourceAsStream("/res/tiles/sand.png"));
+      tile[5] = new Tile();
+      tile[5].image = ImageIO.read(getClass().getResourceAsStream("/res/tiles/sand.png"));
 
     } catch (IOException e) {
       e.printStackTrace();
@@ -56,19 +56,21 @@ public class TileManager {
 
       int col = 0;
       int row = 0;
-
-      while (col < gp.maxScreenCol && row < gp.maxScreenRow) {
+      // World map has become the boundary as compared to just the screen/frame
+      while (col < gp.maxWorldCol && row < gp.maxWorldRow) {
         String line = br.readLine(); // reads A line of text in the txt file
 
-        while (col < gp.maxScreenCol) {
+        while (col < gp.maxWorldCol) {
           String numbers[] = line.split(" ");
           int num = Integer.parseInt(numbers[col]); // after reading, turns string into integer
           mapTileNum[col][row] = num;
           col++;
+          System.out.println("tile " + col + " row " + row);
         }
-        if (col == gp.maxScreenCol) {
+        if (col == gp.maxWorldCol) {
           col = 0;
           row++;
+          System.out.println("row done loading" + row);
         }
 
       }
@@ -79,23 +81,31 @@ public class TileManager {
 
   // loop to render the background tiles
   public void draw(Graphics2D g2) {
-    int col = 0;
-    int row = 0;
-    int x = 0;
-    int y = 0;
+    int worldCol = 0;
+    int worldRow = 0;
 
-    while (col < gp.maxScreenCol && row < gp.maxScreenRow) {
-      int tileNum = mapTileNum[col][row]; // extracts the tile number
+    while (worldCol < gp.maxWorldCol && worldRow < gp.maxWorldRow) {
+      int tileNum = mapTileNum[worldCol][worldRow]; // extracts the tile number
 
-      g2.drawImage(tile[tileNum].image, x, y, gp.tileSize, gp.tileSize, null);
-      col++; // the next tile to the right
-      x += gp.tileSize; // the next tile
+      int worldX = worldCol * gp.tileSize; // position of the tile on the map(txt file)
+      int worldY = worldRow * gp.tileSize;
+      int screenX = worldX - gp.player.worldX + gp.player.screenX;// subtracting player.worldx value to represent where
+                                                                  // the tile loads relative to the player
+      int screenY = worldY - gp.player.worldY + gp.player.screenY;
 
-      if (col == gp.maxScreenCol) {
-        col = 0;
-        x = 0;
-        row++;
-        y += gp.tileSize;
+      // ONLY WHEN TILE IS WITIHN THE BOUNDARY OF SCREEN X AND Y, IT WILL BE DRAWN!!
+      //do this to save processing power if map is too big and has many tiles to render
+      if (worldX + gp.tileSize > gp.player.worldX - gp.player.screenX &&
+          worldX - gp.tileSize < gp.player.worldX + gp.player.screenX &&
+          worldY + gp.tileSize > gp.player.worldY - gp.player.screenY &&
+          worldY - gp.tileSize < gp.player.worldY + gp.player.screenY) {
+        g2.drawImage(tile[tileNum].image, screenX, screenY, gp.tileSize, gp.tileSize, null);
+      }
+      worldCol++; // the next tile to the right
+
+      if (worldCol == gp.maxWorldCol) {
+        worldCol = 0;
+        worldRow++;
       }
     }
   }

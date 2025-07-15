@@ -9,21 +9,28 @@ import entity.Player;
 import tile.TileManager;
 
 public class GamePanel extends JPanel implements Runnable {
-  public final int originalTileSize = 16; // 16x16 tile size, most 2D game elements and chars are designed with this size
-  public final int scale = 3; // to scale up
 
+  // SCREEN SETTINGS
+  public final int originalTileSize = 16; // 16x16 tile size, most 2D game elements and chars use this size
+  public final int scale = 3; // to scale up
   public final int tileSize = originalTileSize * scale; // 48x48 tile size
   public final int maxScreenCol = 16;
   public final int maxScreenRow = 12;
   public final int screenWidth = tileSize * maxScreenCol; // 768 pixels
   public final int screenHeight = tileSize * maxScreenRow; // 576 pixels
+
+  // WORLD SETTINGS
+  public final int maxWorldCol = 50;
+  public final int maxWorldRow = 50;
+  public final int worldWidth = tileSize * maxWorldCol;
+  public final int worldHeight = tileSize * maxWorldRow;
+  // FPS
   int FPS = 60;
 
   TileManager tileM = new TileManager(this);
   KeyHandler keyH = new KeyHandler();
   Thread gameThread;
-  Player player = new Player(this, keyH); //pass gamepanel class and keyhandler to player class
-
+  public Player player = new Player(this, keyH); // pass gamepanel class and keyhandler to player class
 
   public GamePanel() {
     this.setPreferredSize(new Dimension(screenWidth, screenHeight)); // set the size of the class JPanel
@@ -39,7 +46,7 @@ public class GamePanel extends JPanel implements Runnable {
     gameThread.start();
   }
 
-  //This game loop waits for the timer to beep, then only updating+repainting
+  // This game loop waits for the timer to beep, then only updating+repainting
   // public void run() {
 
   // double drawInterval = 1000000000 / FPS; // 0.01666 seconds, means drawing the
@@ -73,7 +80,8 @@ public class GamePanel extends JPanel implements Runnable {
   // }
   // }
 
-  //this game loop waits for the water bucket to fill up, only then it update+repaint
+  // this game loop waits for the water bucket to fill up, only then it
+  // update+repaint
   public void run() {
     double drawInterval = 1000000000 / FPS;
     double delta = 0;
@@ -93,10 +101,10 @@ public class GamePanel extends JPanel implements Runnable {
         delta--;
         drawCount++;
       }
-      if(timer>=1000000000){
-        System.out.println("FPS: "+drawCount);
-        drawCount=0;
-        timer=0;
+      if (timer >= 1000000000) {
+        System.out.println("FPS: " + drawCount);
+        drawCount = 0;
+        timer = 0;
       }
     }
   }
@@ -116,6 +124,7 @@ public class GamePanel extends JPanel implements Runnable {
     tileM.draw(g2);
     player.draw(g2);
     g2.dispose();
-    // dispose of this graphics context and release any system resource that it is using
+    // dispose of this graphics context and release any system resource that it is
+    // using
   }
 }
