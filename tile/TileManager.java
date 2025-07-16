@@ -11,8 +11,8 @@ import java.awt.Graphics2D;
 
 public class TileManager {
   GamePanel gp;
-  Tile[] tile;
-  int mapTileNum[][];
+  public Tile[] tile;
+  public int mapTileNum[][];
 
   public TileManager(GamePanel gp) {
     this.gp = gp;
@@ -29,15 +29,19 @@ public class TileManager {
 
       tile[1] = new Tile();
       tile[1].image = ImageIO.read(getClass().getResourceAsStream("/res/tiles/wall.png"));
+      tile[1].collision = true;
 
       tile[2] = new Tile();
       tile[2].image = ImageIO.read(getClass().getResourceAsStream("/res/tiles/water.png"));
+      tile[2].collision = true;
 
       tile[3] = new Tile();
       tile[3].image = ImageIO.read(getClass().getResourceAsStream("/res/tiles/earth.png"));
+      tile[3].collision = true;
 
       tile[4] = new Tile();
       tile[4].image = ImageIO.read(getClass().getResourceAsStream("/res/tiles/tree.png"));
+      tile[4].collision = true;
 
       tile[5] = new Tile();
       tile[5].image = ImageIO.read(getClass().getResourceAsStream("/res/tiles/sand.png"));
@@ -65,12 +69,10 @@ public class TileManager {
           int num = Integer.parseInt(numbers[col]); // after reading, turns string into integer
           mapTileNum[col][row] = num;
           col++;
-          System.out.println("tile " + col + " row " + row);
         }
         if (col == gp.maxWorldCol) {
           col = 0;
           row++;
-          System.out.println("row done loading" + row);
         }
 
       }
@@ -94,7 +96,8 @@ public class TileManager {
       int screenY = worldY - gp.player.worldY + gp.player.screenY;
 
       // ONLY WHEN TILE IS WITIHN THE BOUNDARY OF SCREEN X AND Y, IT WILL BE DRAWN!!
-      //do this to save processing power if map is too big and has many tiles to render
+      // do this to save processing power if map is too big and has many tiles to
+      // render
       if (worldX + gp.tileSize > gp.player.worldX - gp.player.screenX &&
           worldX - gp.tileSize < gp.player.worldX + gp.player.screenX &&
           worldY + gp.tileSize > gp.player.worldY - gp.player.screenY &&

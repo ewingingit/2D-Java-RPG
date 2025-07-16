@@ -1,8 +1,7 @@
 package entity;
 
-import java.awt.Color;
-import java.awt.Graphics;
 import java.awt.Graphics2D;
+import java.awt.Rectangle;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import javax.imageio.ImageIO;
@@ -15,21 +14,24 @@ public class Player extends Entity {
 
   public final int screenX, screenY;
 
-
   public Player(GamePanel gp, KeyHandler keyH) {
     this.gp = gp;
     this.keyH = keyH;
     setDefaultValues();
     getPlayerImage();
     spriteNum = 1;
-    screenX=gp.screenWidth/2 - (gp.tileSize/2);
-    screenY=gp.screenHeight/2 -(gp.tileSize/2); //subtract half a tile length to make char center match screen center
+    solidArea = new Rectangle(9, 16, gp.tileSize - 18, gp.tileSize - 18);
+    // solidArea.x=8;
+    // solidArea.y=16;solidArea.width=gp.tileSize;solidArea.height=gp.tileSize;
+    screenX = gp.screenWidth / 2 - (gp.tileSize / 2);
+    screenY = gp.screenHeight / 2 - (gp.tileSize / 2); // subtract half a tile length to make char center match screen
+                                                       // center
   }
 
   public void setDefaultValues() {
-    worldX = gp.tileSize *23; //alt: worldX=1000
-    worldY = gp.tileSize*21;
-    speed = 12;
+    worldX = gp.tileSize * 23; // alt: worldX=1000
+    worldY = gp.tileSize * 21;
+    speed = 8;
     direction = "right";
   }
 
@@ -54,20 +56,40 @@ public class Player extends Entity {
     // this if statement makes it so that the sprites only change when you are
     // pressing the keys
     if (keyH.upPressed == true || keyH.downPressed == true || keyH.leftPressed == true || keyH.rightPressed == true) {
+      System.out.println("key press is true");
       if (keyH.upPressed == true) {
         direction = "up";
-        worldY -= speed;
       } else if (keyH.rightPressed == true) {
         direction = "right";
-        worldX += speed;
       } else if (keyH.leftPressed == true) {
         direction = "left";
-        worldX -= speed;
       } else if (keyH.downPressed == true) {
         direction = "down";
-        worldY += speed;
       }
 
+      // check tile collision
+      collisionOn = false;
+      gp.cCheck.CheckTile(this); // pass player as an entity as player extends entity class
+
+      // if collision false, player can move
+      //this is what makes player able to move on grass/floor/dirt etc
+      if (collisionOn == false) {
+        System.out.println("collision false");
+        switch (direction) {
+          case "up":
+            worldY -= speed;
+            break;
+          case "down":
+            worldY += speed;
+            break;
+          case "left":
+            worldX -= speed;
+            break;
+          case "right":
+            worldX += speed;
+            break;
+        }
+      }
       spriteCounter++;
       if (spriteCounter > 8) { // this means every player image changes every 12 frames
         if (spriteNum == 1) {

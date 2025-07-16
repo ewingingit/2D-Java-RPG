@@ -30,14 +30,15 @@ public class GamePanel extends JPanel implements Runnable {
   TileManager tileM = new TileManager(this);
   KeyHandler keyH = new KeyHandler();
   Thread gameThread;
+  public CollisionChecker cCheck = new CollisionChecker(this);
   public Player player = new Player(this, keyH); // pass gamepanel class and keyhandler to player class
 
   public GamePanel() {
     this.setPreferredSize(new Dimension(screenWidth, screenHeight)); // set the size of the class JPanel
     this.setBackground(Color.BLACK);
     this.setDoubleBuffered(true);// all drawings from this component will be done in an offscreen pointing buffer
-    this.addKeyListener(keyH); // gamepanel will recognise the key inputs
     this.setFocusable(true); // allows the GamePanel to be able to be "focused" on to recieve key inputs.
+    this.addKeyListener(keyH); // gamepanel will recognise the key inputs
   }
 
   public void startGameThread() {
