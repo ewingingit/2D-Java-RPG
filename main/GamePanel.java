@@ -6,6 +6,7 @@ import java.awt.Graphics;
 import java.awt.Graphics2D;
 import javax.swing.JPanel;
 import entity.Player;
+import object.SuperObject;
 import tile.TileManager;
 
 public class GamePanel extends JPanel implements Runnable {
@@ -31,7 +32,9 @@ public class GamePanel extends JPanel implements Runnable {
   KeyHandler keyH = new KeyHandler();
   Thread gameThread;
   public CollisionChecker cCheck = new CollisionChecker(this);
+  public AssetSetter aSetter = new AssetSetter(this);
   public Player player = new Player(this, keyH); // pass gamepanel class and keyhandler to player class
+  public SuperObject obj[]= new SuperObject[10]; //array to store objects to be displayed on the screen at all times
 
   public GamePanel() {
     this.setPreferredSize(new Dimension(screenWidth, screenHeight)); // set the size of the class JPanel
@@ -39,6 +42,10 @@ public class GamePanel extends JPanel implements Runnable {
     this.setDoubleBuffered(true);// all drawings from this component will be done in an offscreen pointing buffer
     this.setFocusable(true); // allows the GamePanel to be able to be "focused" on to recieve key inputs.
     this.addKeyListener(keyH); // gamepanel will recognise the key inputs
+  }
+
+  public void setupGame(){ //this method to add other setup stuff in the future
+    aSetter.setObject();
   }
 
   public void startGameThread() {
@@ -103,7 +110,6 @@ public class GamePanel extends JPanel implements Runnable {
         drawCount++;
       }
       if (timer >= 1000000000) {
-        System.out.println("FPS: " + drawCount);
         drawCount = 0;
         timer = 0;
       }
@@ -122,7 +128,18 @@ public class GamePanel extends JPanel implements Runnable {
     // Graphics2D extends graphics class, provides more control over geometry,
     // coordinate transformations, color mngmnt & text layout
     Graphics2D g2 = (Graphics2D) g;
+
+    //TILE
     tileM.draw(g2);
+    
+    //OBJECT
+    for(int i=0;i<obj.length;i++){
+      if(obj[i]!=null){
+        obj[i].draw(g2,this);
+      }
+    }
+
+    //PLAYER
     player.draw(g2);
     g2.dispose();
     // dispose of this graphics context and release any system resource that it is

@@ -16,6 +16,7 @@ public class Main {
     window.pack(); //causes this window to be sized to fit the preferred size and layouts of its subcompenents(GamePanel), in this case making it visible
     window.setLocationRelativeTo(null); //make it appear centered to the screen
     window.setVisible(true);
+    gamePanel.setupGame();
     gamePanel.startGameThread();
   }
 }

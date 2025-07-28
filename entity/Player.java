@@ -13,25 +13,28 @@ public class Player extends Entity {
   KeyHandler keyH;
 
   public final int screenX, screenY;
+  int hasKey =0;
 
   public Player(GamePanel gp, KeyHandler keyH) {
     this.gp = gp;
     this.keyH = keyH;
-    setDefaultValues();
-    getPlayerImage();
+
     spriteNum = 1;
     solidArea = new Rectangle(9, 16, gp.tileSize - 18, gp.tileSize - 18);
-    // solidArea.x=8;
-    // solidArea.y=16;solidArea.width=gp.tileSize;solidArea.height=gp.tileSize;
+    // solidArea.x=8; solidArea.y=16; solidArea.width=gp.tileSize; solidArea.height=gp.tileSize;
     screenX = gp.screenWidth / 2 - (gp.tileSize / 2);
-    screenY = gp.screenHeight / 2 - (gp.tileSize / 2); // subtract half a tile length to make char center match screen
-                                                       // center
+    screenY = gp.screenHeight / 2 - (gp.tileSize / 2);
+    // subtract half a tile length to make char center match screen center
+    solidAreaDefaultX = solidArea.x;
+    solidAreaDefaultY=solidArea.y;
+    setDefaultValues();
+    getPlayerImage();
   }
 
   public void setDefaultValues() {
     worldX = gp.tileSize * 23; // alt: worldX=1000
     worldY = gp.tileSize * 21;
-    speed = 8;
+    speed = 20;
     direction = "right";
   }
 
@@ -56,7 +59,6 @@ public class Player extends Entity {
     // this if statement makes it so that the sprites only change when you are
     // pressing the keys
     if (keyH.upPressed == true || keyH.downPressed == true || keyH.leftPressed == true || keyH.rightPressed == true) {
-      System.out.println("key press is true");
       if (keyH.upPressed == true) {
         direction = "up";
       } else if (keyH.rightPressed == true) {
@@ -67,14 +69,18 @@ public class Player extends Entity {
         direction = "down";
       }
 
+
       // check tile collision
       collisionOn = false;
       gp.cCheck.CheckTile(this); // pass player as an entity as player extends entity class
 
+      //check object collision
+      int objIndex = gp.cCheck.checkObject(this, true);
+      pickUpObject(objIndex);
+
       // if collision false, player can move
-      //this is what makes player able to move on grass/floor/dirt etc
+      // this is what makes player able to move on grass/floor/dirt etc
       if (collisionOn == false) {
-        System.out.println("collision false");
         switch (direction) {
           case "up":
             worldY -= speed;
@@ -98,6 +104,25 @@ public class Player extends Entity {
           spriteNum = 1;
         }
         spriteCounter = 0;
+      }
+    }
+  }
+
+  public void pickUpObject(int i){
+    if(i != 999){
+      String objectName=gp.obj[i].name;
+      switch(objectName){
+        case "Key":
+        hasKey++;
+        gp.obj[i]=null;
+        System.out.println("Key: "+hasKey);
+        break;
+        case "Door":
+        if(hasKey>0){
+          gp.obj[i]=null;
+          hasKey--;
+        }
+        break;
       }
     }
   }

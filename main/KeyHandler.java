@@ -9,13 +9,11 @@ public class KeyHandler implements KeyListener {
   public boolean upPressed, downPressed, leftPressed, rightPressed;
 
   public void keyTyped(KeyEvent e) {
-    throw new UnsupportedOperationException("Unimplemented method 'keyTyped'");
   }
 
   @Override
   public void keyPressed(KeyEvent e) {
     int code = e.getKeyCode();
-
     if (code == KeyEvent.VK_W) {
       upPressed = true;
     }
@@ -32,7 +30,6 @@ public class KeyHandler implements KeyListener {
 
   public void keyReleased(KeyEvent e) {
     int code = e.getKeyCode();
-
     if (code == KeyEvent.VK_W) {
       upPressed = false;
     }
